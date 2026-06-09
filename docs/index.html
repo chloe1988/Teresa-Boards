@@ -101,6 +101,48 @@
       background-color: #9b6b52;
     }
 
+    .dropdown-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 24px;
+      color: #f5e6d3;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+
+    .dropdown-label:hover { background-color: #9b6b52; }
+
+    .dropdown-label .arrow {
+      font-size: 0.75rem;
+      transition: transform 0.2s;
+    }
+
+    .dropdown-label.open .arrow { transform: rotate(180deg); }
+
+    .sub-menu {
+      display: none;
+      background-color: #5c3d2e;
+    }
+
+    .sub-menu.open { display: block; }
+
+    .sub-menu a {
+      padding: 11px 24px 11px 38px;
+      font-size: 0.88rem;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      color: #e8c9a0;
+    }
+
+    .sub-menu a:last-child { border-bottom: none; }
+
+    .sub-menu a:hover { background-color: #7a5243; }
+
     /* ── HERO ── */
     .hero {
       text-align: center;
@@ -228,10 +270,17 @@
     </button>
 
     <div class="dropdown" id="dropdown">
-      <a href="#">Home</a>
-      <a href="#">Our Boards</a>
+      <a href="index.html">Home</a>
+      <div class="dropdown-label" id="boardsLabel">Our Boards <span class="arrow">▼</span></div>
+      <div class="sub-menu" id="boardsMenu">
+        <a href="classic-charcuterie.html">Classic Charcuterie</a>
+        <a href="fruit-sweet-board.html">Fruit &amp; Sweet</a>
+        <a href="bread-dip-board.html">Bread &amp; Dip</a>
+        <a href="signature-board.html">Cured Meats, Cheese, Fruits and Nuts</a>
+        <a href="delectable-reviews.html">Delectable Reviews</a>
+      </div>
       <a href="#">Custom Orders</a>
-      <a href="#">Gallery</a>
+      <a href="gallery.html">Gallery</a>
       <a href="#">About Teresa</a>
       <a href="#">Contact</a>
     </div>
@@ -296,6 +345,13 @@
   </footer>
 
   <script>
+    const boardsLabel = document.getElementById('boardsLabel');
+    const boardsMenu = document.getElementById('boardsMenu');
+    boardsLabel.addEventListener('click', () => {
+      boardsMenu.classList.toggle('open');
+      boardsLabel.classList.toggle('open');
+    });
+
     const btn = document.getElementById('menuBtn');
     const dropdown = document.getElementById('dropdown');
 
