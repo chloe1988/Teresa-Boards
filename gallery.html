@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gallery – Teresa's Boards</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Georgia', serif;
+      background-color: #fdf6ee;
+      color: #3b2a1a;
+    }
+
+    /* ── NAV ── */
+    nav {
+      background-color: #5c3d2e;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      height: 64px;
+      position: relative;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    }
+
+    .site-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #f5e6d3;
+      font-size: 1.6rem;
+      letter-spacing: 2px;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #f5e6d3;
+      text-decoration: none;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      transition: color 0.2s;
+    }
+
+    .back-btn:hover { color: #e8c9a0; }
+    .back-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .hamburger { display: flex; flex-direction: column; justify-content: space-between; width: 28px; height: 20px; cursor: pointer; z-index: 100; background: none; border: none; padding: 0; margin-left: 18px; }
+    .hamburger span { display: block; height: 3px; width: 100%; background-color: #f5e6d3; border-radius: 3px; }
+    .hamburger:hover span { background-color: #e8c9a0; }
+    .dropdown { display: none; position: absolute; top: 64px; left: 0; background-color: #7a5243; min-width: 240px; box-shadow: 4px 4px 12px rgba(0,0,0,0.3); z-index: 99; border-radius: 0 0 8px 0; }
+    .dropdown.open { display: block; }
+    .dropdown a { display: block; padding: 14px 24px; color: #f5e6d3; text-decoration: none; font-size: 1rem; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); transition: background-color 0.2s; }
+    .dropdown a:last-child { border-bottom: none; }
+    .dropdown a:hover { background-color: #9b6b52; }
+    .dropdown-label { display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; color: #f5e6d3; font-size: 1rem; letter-spacing: 1px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; user-select: none; transition: background-color 0.2s; }
+    .dropdown-label:hover { background-color: #9b6b52; }
+    .dropdown-label .arrow { font-size: 0.75rem; transition: transform 0.2s; }
+    .dropdown-label.open .arrow { transform: rotate(180deg); }
+    .sub-menu { display: none; background-color: #5c3d2e; }
+    .sub-menu.open { display: block; }
+    .sub-menu a { padding: 11px 24px 11px 38px; font-size: 0.88rem; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.07); color: #e8c9a0; }
+    .sub-menu a:last-child { border-bottom: none; }
+    .sub-menu a:hover { background-color: #7a5243; }
+
+    /* ── HERO ── */
+    .hero {
+      background-color: #5c3d2e;
+      padding: 52px 24px 44px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      color: #f5e6d3;
+      font-size: 2.8rem;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+    }
+
+    .hero p {
+      color: #c9a07a;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+
+    /* ── GALLERY SECTIONS ── */
+    .gallery-section {
+      max-width: 1200px;
+      margin: 60px auto;
+      padding: 0 24px;
+    }
+
+    .section-heading {
+      font-size: 1.5rem;
+      color: #5c3d2e;
+      letter-spacing: 2px;
+      margin-bottom: 6px;
+      border-left: 4px solid #d4a97a;
+      padding-left: 14px;
+    }
+
+    .section-sub {
+      color: #9b6b52;
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      padding-left: 18px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .photo-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 4 / 3;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      cursor: pointer;
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .photo-card:hover img {
+      transform: scale(1.06);
+    }
+
+    .photo-card .caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(to top, rgba(60,30,10,0.82) 0%, transparent 100%);
+      color: #f5e6d3;
+      font-size: 0.88rem;
+      letter-spacing: 1px;
+      padding: 28px 14px 12px;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .photo-card:hover .caption {
+      opacity: 1;
+    }
+
+    /* featured tall card */
+    .photo-card.tall {
+      aspect-ratio: 3 / 4;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .lightbox.open {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 88vh;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      object-fit: contain;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 28px;
+      color: #f5e6d3;
+      font-size: 2.4rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+
+    .lightbox-close:hover { color: #e8c9a0; }
+
+    .lightbox-caption {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #e8c9a0;
+      font-size: 0.95rem;
+      letter-spacing: 1px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      background-color: #5c3d2e;
+      color: #c9a07a;
+      padding: 24px;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      margin-top: 60px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .site-title { font-size: 1.1rem; }
+      .hero h1 { font-size: 1.9rem; letter-spacing: 1px; }
+      .gallery-section { margin: 36px auto; padding: 0 14px; }
+      .photo-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .photo-card.tall { aspect-ratio: 4 / 3; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="back-btn">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </a>
+    <button class="hamburger" id="menuBtn" aria-label="Open menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="dropdown" id="dropdown">
+      <a href="index.html">Home</a>
+      <div class="dropdown-label" id="boardsLabel">Our Boards <span class="arrow">▼</span></div>
+      <div class="sub-menu" id="boardsMenu">
+        <a href="classic-charcuterie.html">Classic Charcuterie</a>
+        <a href="fruit-sweet-board.html">Fruit &amp; Sweet</a>
+        <a href="bread-dip-board.html">Bread &amp; Dip</a>
+        <a href="signature-board.html">Cured Meats, Cheese, Fruits and Nuts</a>
+        <a href="delectable-reviews.html">Delectable Reviews</a>
+      </div>
+      <a href="#">Custom Orders</a>
+      <a href="gallery.html">Gallery</a>
+      <a href="#">About Teresa</a>
+      <a href="#">Contact</a>
+    </div>
+    <a href="index.html" class="site-title">Teresa's Boards</a>
+  </nav>
+
+  <div class="hero">
+    <h1>Gallery</h1>
+    <p>A peek at the beautiful boards we've crafted — each one made with love.</p>
+  </div>
+
+  <!-- CLASSIC CHARCUTERIE -->
+  <section class="gallery-section">
+    <h2 class="section-heading">Classic Charcuterie</h2>
+    <p class="section-sub">Cured meats, artisan cheeses, and all the trimmings.</p>
+    <div class="photo-grid">
+      <div class="photo-card" data-caption="Classic Charcuterie Board">
+        <img src="https://images.unsplash.com/photo-1626628577177-7c9a3a907d5a?w=800&q=80&auto=format&fit=crop" alt="Classic charcuterie spread" loading="lazy" />
+        <div class="caption">Classic Charcuterie Spread</div>
+      </div>
+      <div class="photo-card" data-caption="Parlor Platter">
+        <img src="https://images.unsplash.com/photo-1616631124348-c63521eb484c?w=800&q=80&auto=format&fit=crop" alt="Parlor platter with meats and cheese" loading="lazy" />
+        <div class="caption">Parlor Platter</div>
+      </div>
+      <div class="photo-card" data-caption="The Cocktail Hour Spread">
+        <img src="https://images.unsplash.com/photo-1695606392727-d8b959879721?w=800&q=80&auto=format&fit=crop" alt="Cocktail hour charcuterie" loading="lazy" />
+        <div class="caption">The Cocktail Hour Spread</div>
+      </div>
+      <div class="photo-card" data-caption="Cured & Crafted">
+        <img src="https://images.unsplash.com/photo-1640618491853-95b2c5041eda?w=800&q=80&auto=format&fit=crop" alt="Cured meats and crafted cheeses" loading="lazy" />
+        <div class="caption">Cured &amp; Crafted</div>
+      </div>
+      <div class="photo-card" data-caption="The Garden Party Spread">
+        <img src="https://images.unsplash.com/photo-1626628577132-f1e88acdd92c?w=800&q=80&auto=format&fit=crop" alt="Garden party charcuterie" loading="lazy" />
+        <div class="caption">The Garden Party Spread</div>
+      </div>
+      <div class="photo-card" data-caption="The Weeknight Spread">
+        <img src="https://images.unsplash.com/photo-1541529086526-db283c563270?w=800&q=80&auto=format&fit=crop" alt="Weeknight charcuterie board" loading="lazy" />
+        <div class="caption">The Weeknight Spread</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FRUIT & SWEET -->
+  <section class="gallery-section">
+    <h2 class="section-heading">Fruit &amp; Sweet</h2>
+    <p class="section-sub">Seasonal fruits, chocolates, candies, and confections.</p>
+    <div class="photo-grid">
+      <div class="photo-card" data-caption="Tropical Escape Board">
+        <img src="https://images.unsplash.com/photo-1612031337730-0f316ed3e5ee?w=800&q=80&auto=format&fit=crop" alt="Tropical fruit board" loading="lazy" />
+        <div class="caption">Tropical Escape</div>
+      </div>
+      <div class="photo-card" data-caption="Valentine's & Romance Board">
+        <img src="https://images.unsplash.com/photo-1611070097019-134ef801cfa5?w=800&q=80&auto=format&fit=crop" alt="Valentine's sweet board" loading="lazy" />
+        <div class="caption">Valentine's &amp; Romance</div>
+      </div>
+      <div class="photo-card" data-caption="Elegant & Refined Sweet Board">
+        <img src="https://images.unsplash.com/photo-1517093602195-b40af9688b46?w=800&q=80&auto=format&fit=crop" alt="Elegant fruit and cheese board" loading="lazy" />
+        <div class="caption">Elegant &amp; Refined</div>
+      </div>
+      <div class="photo-card" data-caption="Brunch Sweet Board">
+        <img src="https://images.unsplash.com/photo-1589881210718-42da05899fe4?w=800&q=80&auto=format&fit=crop" alt="Brunch sweet board" loading="lazy" />
+        <div class="caption">Brunch Sweet Board</div>
+      </div>
+      <div class="photo-card" data-caption="Candy & Confection Board">
+        <img src="https://images.unsplash.com/photo-1523033904333-243d0283acae?w=800&q=80&auto=format&fit=crop" alt="Candy and confection board" loading="lazy" />
+        <div class="caption">Candy &amp; Confection</div>
+      </div>
+      <div class="photo-card" data-caption="Kids & Family Board">
+        <img src="https://images.unsplash.com/photo-1671868143743-63d0cf07d9b1?w=800&q=80&auto=format&fit=crop" alt="Kids and family sweet board" loading="lazy" />
+        <div class="caption">Kids &amp; Family</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ASSORTED / MIXED -->
+  <section class="gallery-section">
+    <h2 class="section-heading">A Little of Everything</h2>
+    <p class="section-sub">Custom builds, event spreads, and showstoppers.</p>
+    <div class="photo-grid">
+      <div class="photo-card" data-caption="Custom Event Board">
+        <img src="https://images.unsplash.com/photo-1700760933443-84ef4f5feac4?w=800&q=80&auto=format&fit=crop" alt="Custom event board" loading="lazy" />
+        <div class="caption">Custom Event Board</div>
+      </div>
+      <div class="photo-card" data-caption="Artisan Spread">
+        <img src="https://images.unsplash.com/photo-1692311590333-11db3b128650?w=800&q=80&auto=format&fit=crop" alt="Artisan mixed board" loading="lazy" />
+        <div class="caption">Artisan Spread</div>
+      </div>
+      <div class="photo-card" data-caption="Fruit & Cheese Assortment">
+        <img src="https://images.unsplash.com/photo-1707079288822-be30b3d1de72?w=800&q=80&auto=format&fit=crop" alt="Fruit and cheese assortment" loading="lazy" />
+        <div class="caption">Fruit &amp; Cheese Assortment</div>
+      </div>
+      <div class="photo-card" data-caption="The Grand Spread">
+        <img src="https://images.unsplash.com/photo-1611764197743-702a4d01463b?w=800&q=80&auto=format&fit=crop" alt="Grand charcuterie spread" loading="lazy" />
+        <div class="caption">The Grand Spread</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&times;</button>
+    <img id="lightboxImg" src="" alt="" />
+    <div class="lightbox-caption" id="lightboxCaption"></div>
+  </div>
+
+  <footer>
+    &copy; 2026 Teresa's Boards &nbsp;|&nbsp; All Rights Reserved
+  </footer>
+
+  <script>
+    // Hamburger nav
+    const menuBtn = document.getElementById('menuBtn');
+    const dropdown = document.getElementById('dropdown');
+    const boardsLabel = document.getElementById('boardsLabel');
+    const boardsMenu = document.getElementById('boardsMenu');
+    menuBtn.addEventListener('click', () => { const o = dropdown.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
+    boardsLabel.addEventListener('click', () => { boardsMenu.classList.toggle('open'); boardsLabel.classList.toggle('open'); });
+    document.addEventListener('click', (e) => { if (!menuBtn.contains(e.target) && !dropdown.contains(e.target)) { dropdown.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false); } });
+
+    // Lightbox
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxCaption = document.getElementById('lightboxCaption');
+    const lightboxClose = document.getElementById('lightboxClose');
+
+    document.querySelectorAll('.photo-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const img = card.querySelector('img');
+        lightboxImg.src = img.src.replace('w=800', 'w=1400');
+        lightboxImg.alt = img.alt;
+        lightboxCaption.textContent = card.dataset.caption || '';
+        lightbox.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    lightboxClose.addEventListener('click', closeLightbox);
+    lightbox.addEventListener('click', (e) => { if (e.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeLightbox(); });
+  </script>
+
+</body>
+</html>
